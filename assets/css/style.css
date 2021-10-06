@@ -15,5 +15,22 @@ body main #game {
   margin: 0 auto;
   background-color: white;
 }
+body footer {
+  text-align: center;
+  width: 100%;
+  padding-top: 2rem;
+}
+body footer a {
+  display: none;
+  text-decoration: none;
+  font-size: 1.8rem;
+  color: black;
+  background-color: white;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-radius: 30%;
+}
 
 /*# sourceMappingURL=style.css.map */

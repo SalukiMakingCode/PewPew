@@ -16,4 +16,21 @@ body {
       background-color: white;
     }
   }
+  footer {
+    text-align: center;
+    width: 100%;
+    padding-top: 2rem;
+    & a {
+      display:none;
+      text-decoration: none;
+      font-size: 1.8rem;
+      color:black;
+      background-color: white;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      border-radius: 30%;
+    }
+  }
 }
