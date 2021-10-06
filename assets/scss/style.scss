@@ -1,0 +1,19 @@
+body {
+  background-color: black;
+  & header {
+    & img {
+      display: none;
+    }
+  }
+  & main {
+    padding-top: 5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    & #game {
+      margin: 0 auto;
+      background-color: white;
+    }
+  }
+}
