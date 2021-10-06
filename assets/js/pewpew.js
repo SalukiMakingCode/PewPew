@@ -9,7 +9,7 @@ let pontImg = document.getElementById("pont");
 let seaPosX=0;
 let seaPosY=0;
 let seaImg = document.getElementById("sea");
-let boulet = [{ "id":0, "posX":-20, "posY":-20 }] ;
+let boulet = [{ "id":0, "posX":-20, "posY":-20, "active":0 }] ;
 let bouletImg = document.getElementById("boulet");
 let boat = [{ "id":0, "posX":20, "posY":0, "img":"boat1Img", "vitesse":1, "active":0 }] ;
 let boat1Img = document.getElementById("boat1");
@@ -28,11 +28,24 @@ let explode7Img = document.getElementById("explode7");
 let explode8Img = document.getElementById("explode8");
 let gameoverImg = document.getElementById("gameover");
 let loadGameOver=0;
+
+function collide (bouletPosX, bouletPosY, bouletWidth, bouletLength, boatPosX, boatPosY, boatWidth, boatLength) {
+    if (boatPosX > bouletPosX + bouletWidth ||
+        boatPosX < bouletPosX - boatWidth ||
+        boatPosY > bouletPosY + bouletLength ||
+        boatPosY < bouletPosY - boatLength) {
+        return false
+    }
+    else {
+        return true
+    }
+}
+
+
 // fonction name is clear no ?
 function refreshScreen() {
     let ctx = c.getContext("2d");
     ctx.clearRect(0, 0, c.width, c.height);
-
     ctx.drawImage(seaImg, seaPosX, seaPosY);
     ctx.drawImage(pontImg, pontPosX, pontPosY);
     ctx.drawImage(canonImg, canonPosX, canonPosY);
@@ -40,7 +53,7 @@ function refreshScreen() {
         if (boat[i]["active"]<16) ctx.drawImage(eval(boat[i]["img"]), boat[i]["posX"], boat[i]["posY"]);
     }
     for (let i=0; i<boulet.length; i++) {
-        ctx.drawImage(bouletImg, boulet[i]["posX"], boulet[i]["posY"]);
+        if (boulet[i]["active"]===0) ctx.drawImage(bouletImg, boulet[i]["posX"], boulet[i]["posY"]);
     }
     live>4 ? ctx.drawImage(liveImg, 500, 10) : ctx.drawImage(liveLoseImg, 500, 10);
     live>3 ? ctx.drawImage(liveImg, 530, 10) : ctx.drawImage(liveLoseImg, 530, 10);
@@ -57,9 +70,28 @@ function refreshScreen() {
 // move the boulet
 setInterval(function(){
     for (let i=0; i<boulet.length; i++) {
+        if (boulet[i]["active"]===0) {
+            let posY = boulet[i]["posY"];
+            posY = posY - 10;
+            boulet[i]["posY"] = posY;
+        }
+    }
+    for (let i=0; i<boulet.length; i++) {
         let posY=boulet[i]["posY"];
-        posY=posY-10;
-        boulet[i]["posY"]=posY;
+        let posX=boulet[i]["posX"];
+        if (boulet[i]["active"]===0) {
+
+            for (let j=0; j<boat.length; j++) {
+                if (boat[j]["active"]===0) {
+                    let boatPosY = boat[j]["posY"];
+                    let boatPosX = boat[j]["posX"];
+                    if (collide (posX, posY, 20, 20, boatPosX, boatPosY, 80, 73)===true) {
+                        boat[j]["active"]=3;
+                        boulet[i]["active"]=1;
+                    }
+                }
+            }
+        }
     }
     refreshScreen();
 }, 100);
@@ -68,12 +100,12 @@ setInterval(function(){
 setInterval(function(){
     for (let i=0; i<boat.length; i++) {
         let posY=boat[i]["posY"];
-        if (posY<=347) {
+        if (posY<=347 && boat[i]["active"]===0) {
             posY=posY+boat[i]["vitesse"];
             boat[i]["posY"]=posY;
             boat[i]["img"]==="boat1Img" ? boat[i]["img"]="boat2Img" : boat[i]["img"]="boat1Img";
         }
-        if (posY>347) {
+        if (posY>347 || boat[i]["active"]>0) {
             if (boat[i]["active"]<3) boat[i]["img"]="explode1Img";
             if (boat[i]["active"]>2 && boat[i]["active"]<=4) boat[i]["img"]="explode2Img";
             if (boat[i]["active"]>4 && boat[i]["active"]<=6) boat[i]["img"]="explode3Img";
@@ -102,7 +134,7 @@ function fire() {
     let idBoulet= boulet.length +1 ;
     let posX = canonPosX +22;
     let posY = canonPosY -20;
-    boulet.push({"id":idBoulet,"posX":posX ,"posY":posY});
+    boulet.push({"id":idBoulet,"posX":posX ,"posY":posY, "active":0});
     refreshScreen();
 }
 //make the canon appear and move
